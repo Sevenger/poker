@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"poker/src/casino"
+	"time"
+)
 
 func main() {
-	fmt.Println("hi")
+	timer := time.NewTimer(time.Nanosecond)
+	casino.StartCasino("./input/match.json")
+
 }
