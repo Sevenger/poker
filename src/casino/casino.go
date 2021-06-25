@@ -1,21 +1,10 @@
 package casino
 
-import "time"
-
 type Casino struct {
-	reader  Reader
-	counter Counter
-	Timer   time.Timer
+	Dealer
 }
 
-func NewCasino(timer time.Timer) Casino {
-	return Casino{Timer: timer}
-}
-
-func (c *Casino) StartCasino(filePath string) {
-	c.reader.ReadFile(filePath)
-
-	for range c.Timer.C {
-		c.Timer.Stop()
-	}
+func (c *Casino) start(hand1, hand2 string) (result int) {
+	c.Dealer.Deal(hand1, hand2)
+	return 0
 }
