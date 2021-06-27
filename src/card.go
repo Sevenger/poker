@@ -1,6 +1,6 @@
 package src
 
-var Face = map[string]int{
+var FaceRank = map[string]int{
 	"2": 2,
 	"3": 3,
 	"4": 4,
@@ -17,12 +17,21 @@ var Face = map[string]int{
 	"X": 15,
 }
 
-var Suit = map[rune]int{
-	's': 1,
-	'h': 2,
-	'd': 3,
-	'c': 4,
-	'n': 5,
+var FaceName = map[int]string{
+	2:  "2",
+	3:  "3",
+	4:  "4",
+	5:  "5",
+	6:  "6",
+	7:  "7",
+	8:  "8",
+	9:  "9",
+	10: "T",
+	11: "J",
+	12: "Q",
+	13: "K",
+	14: "A",
+	15: "X",
 }
 
 var HandRank = map[string]int{
@@ -51,11 +60,19 @@ var HandName = map[int]string{
 	1:  "高牌",
 }
 
-var HandCount = map[string]int{
+var FiveHandCount = map[string]int{
 	"1001": 8,
 	"0110": 7,
 	"2010": 4,
 	"1200": 3,
 	"3100": 2,
 	"5000": 1,
+}
+
+var ForHandCount = map[string]int{
+	"0001": 8,
+	"1010": 8,
+	"0200": 7,
+	"2100": 4,
+	"4000": 1,
 }

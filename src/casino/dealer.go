@@ -1,24 +1,27 @@
 package casino
 
 import (
+	"fmt"
 	"poker/src"
 )
 
-type Dealer struct{}
+type Dealer struct {
+	Complete chan int
+}
 
-func (d *Dealer) Deal(hand1 string, hand2 string) {
-	d.Sort(hand1)
-	d.Sort(hand2)
+func (d *Dealer) Deal(hand1 string, hand2 string) ([]string, []string) {
+	return d.DealHand(d.Sort(hand1)), d.DealHand(d.Sort(hand2))
+}
 
-	if len(hand1)/2 == 7 {
-
+func (d *Dealer) DealHand(handStr string) []string {
+	var hands []string
+	//  如果有7张牌，获取7张牌所有可能的牌组合
+	if len(handStr) == 14 {
+		hands = SevenToFive(handStr)
 	} else {
-		(&Counter{}).Count(hand1)
+		hands = append(hands, handStr)
 	}
-
-	if len(hand2)/2 == 7 {
-
-	}
+	return hands
 }
 
 func (*Dealer) Sort(hand string) string {
@@ -27,7 +30,7 @@ func (*Dealer) Sort(hand string) string {
 	val := []byte(hand)
 	for i := 2; i < l; i += 2 {
 		for v := 0; v < i; v += 2 {
-			if src.Face[string(val[v])] < src.Face[string(val[i])] {
+			if src.FaceRank[string(val[v])] < src.FaceRank[string(val[i])] {
 				val[v], val[i] = val[i], val[v]
 				val[v+1], val[i+1] = val[i+1], val[v+1]
 			}
@@ -37,19 +40,21 @@ func (*Dealer) Sort(hand string) string {
 	return string(val)
 }
 
-// SevenToFive 7选5
-func SevenToFive(hand string) string {
-	//var hands []string
-	//runes := []rune(hand)
-	//if hand[0] == 'X' {
-	//	hands = []string{
-	//
-	//	}
-	//} else {
-	//	hands = []string{
-	//
-	//	}
-	//}
+// SevenToFive 7选5 使用穷举法给出排列组合，对于鬼牌，判断4张牌可能组成的最大值
+func SevenToFive(hand string) []string {
+	c1, c2, c3, c4, c5, c6, c7 := hand[0:2], hand[2:4], hand[4:6], hand[6:8], hand[8:10], hand[10:12], hand[12:14]
+	var hands []string
+	var format string
 
-	return ""
+	//  有鬼牌时鬼牌必选，从剩下的6张牌选4张，一共有15种可能
+	if hand[0] == 'X' {
+		format = "%s%s%s%s"
+		hands = append(hands, fmt.Sprintf(format, c2, c3, c4, c5), fmt.Sprintf(format, c2, c3, c4, c6), fmt.Sprintf(format, c2, c3, c4, c7), fmt.Sprintf(format, c2, c3, c5, c6), fmt.Sprintf(format, c2, c3, c5, c7), fmt.Sprintf(format, c2, c3, c6, c7), fmt.Sprintf(format, c2, c4, c5, c6), fmt.Sprintf(format, c2, c4, c5, c7), fmt.Sprintf(format, c2, c4, c6, c7), fmt.Sprintf(format, c2, c5, c6, c7), fmt.Sprintf(format, c3, c4, c5, c6), fmt.Sprintf(format, c3, c4, c5, c7), fmt.Sprintf(format, c3, c4, c6, c7), fmt.Sprintf(format, c3, c5, c6, c7), fmt.Sprintf(format, c4, c5, c6, c7))
+	} else {
+		//  无鬼牌时从7张牌中选5张，一共有21种可能
+		format = "%s%s%s%s%s"
+		hands = append(hands, fmt.Sprintf(format, c1, c2, c3, c4, c5), fmt.Sprintf(format, c1, c2, c3, c4, c6), fmt.Sprintf(format, c1, c2, c3, c4, c7), fmt.Sprintf(format, c1, c2, c3, c5, c6), fmt.Sprintf(format, c1, c2, c3, c5, c7), fmt.Sprintf(format, c1, c2, c3, c6, c7), fmt.Sprintf(format, c1, c2, c4, c5, c6), fmt.Sprintf(format, c1, c2, c4, c5, c7), fmt.Sprintf(format, c1, c2, c4, c6, c7), fmt.Sprintf(format, c1, c2, c5, c6, c7), fmt.Sprintf(format, c1, c3, c4, c5, c6), fmt.Sprintf(format, c1, c3, c4, c5, c7), fmt.Sprintf(format, c1, c3, c4, c6, c7), fmt.Sprintf(format, c1, c3, c5, c6, c7), fmt.Sprintf(format, c1, c4, c5, c6, c7), fmt.Sprintf(format, c2, c3, c4, c5, c6), fmt.Sprintf(format, c2, c3, c4, c5, c7), fmt.Sprintf(format, c2, c3, c4, c6, c7), fmt.Sprintf(format, c2, c3, c5, c6, c7), fmt.Sprintf(format, c2, c4, c5, c6, c7), fmt.Sprintf(format, c3, c4, c5, c6, c7))
+	}
+
+	return hands
 }

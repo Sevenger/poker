@@ -39,11 +39,8 @@ func TestGetHandType(t *testing.T) {
 	}
 
 	for _, use := range useCases {
-		var hs casino.HandStruct
-		counter := casino.Counter{}
-		deal := casino.Dealer{}
+		var hs casino.CountRst
 		t.Run(use.name, func(t *testing.T) {
-			hs = *counter.Count(deal.Sort(use.hand))
 			if src.HandName[hs.HandType] != use.rst {
 				t.Fatalf("牌型不对 预期牌型: %v 输出牌型: %v", use.rst, src.HandName[hs.HandType])
 			}
