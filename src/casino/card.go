@@ -1,4 +1,4 @@
-package src
+package casino
 
 var FaceRank = map[string]int{
 	"2": 2,

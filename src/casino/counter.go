@@ -2,12 +2,10 @@ package casino
 
 import (
 	"fmt"
-	"poker/src"
 	"strings"
 )
 
 type Counter struct {
-	hands chan []string
 }
 
 // QuickCount 计算牌型切片中最大的牌型
@@ -51,7 +49,7 @@ func (*Counter) IsTongHua(hand string) bool {
 
 func (c *Counter) GetHandType(hand string) int {
 	code := c.GetHandFaceCountInfo(c.GetHandFaceCount(hand))
-	tp := src.FiveHandCount[code]
+	tp := FiveHandCount[code]
 
 	if tp == 1 {
 		hasFlush := c.HasFlush(hand)
@@ -59,17 +57,17 @@ func (c *Counter) GetHandType(hand string) int {
 		if hasFlush {
 			if isTongHua {
 				if c.IsRoyalFlush(hand) {
-					tp = src.HandRank["皇家同花顺"]
+					tp = HandRank["皇家同花顺"]
 				} else {
-					tp = src.HandRank["同花顺"]
+					tp = HandRank["同花顺"]
 				}
 			} else {
-				tp = src.HandRank["顺子"]
+				tp = HandRank["顺子"]
 			}
 		} else if isTongHua {
-			tp = src.HandRank["同花"]
+			tp = HandRank["同花"]
 		} else {
-			tp = src.HandRank["高牌"]
+			tp = HandRank["高牌"]
 		}
 	}
 
@@ -79,7 +77,7 @@ func (c *Counter) GetHandType(hand string) int {
 func (c *Counter) GetHostHandType(hand string) int {
 	count := c.GetHandFaceCount(hand)
 	code := c.GetHandFaceCountInfo(count)
-	tp := src.ForHandCount[code]
+	tp := ForHandCount[code]
 
 	if tp == 1 {
 		canBeFlush := c.CanBeFlush(hand)
@@ -87,17 +85,17 @@ func (c *Counter) GetHostHandType(hand string) int {
 		if canBeFlush {
 			if isTongHua {
 				if c.CanBeRoyalFlush(hand) {
-					tp = src.HandRank["皇家同花顺"]
+					tp = HandRank["皇家同花顺"]
 				} else {
-					tp = src.HandRank["同花顺"]
+					tp = HandRank["同花顺"]
 				}
 			} else {
-				tp = src.HandRank["顺子"]
+				tp = HandRank["顺子"]
 			}
 		} else if isTongHua {
-			tp = src.HandRank["同花"]
+			tp = HandRank["同花"]
 		} else {
-			tp = src.HandRank["一对"]
+			tp = HandRank["一对"]
 		}
 	}
 	return tp
@@ -107,9 +105,9 @@ func (c *Counter) GetHostHandType(hand string) int {
 func (*Counter) HasFlush(hand string) bool {
 	var rst = true
 
-	last := src.FaceRank[string(hand[0])]
+	last := FaceRank[string(hand[0])]
 	for i := 2; i < len(hand); i += 2 {
-		val := src.FaceRank[string(hand[i])]
+		val := FaceRank[string(hand[i])]
 		if last-1 != val {
 			rst = false
 			break
@@ -138,9 +136,9 @@ func (*Counter) CanBeFlush(hand string) bool {
 	var rst = true
 	var flag bool
 
-	last := src.FaceRank[string(hand[0])]
+	last := FaceRank[string(hand[0])]
 	for i := 2; i < len(hand); i += 2 {
-		val := src.FaceRank[string(hand[i])]
+		val := FaceRank[string(hand[i])]
 		if last-1 != val && !flag {
 			flag = true
 		} else {
@@ -185,7 +183,7 @@ func (*Counter) GetHandFaceCount(hand string) [15]int {
 	//  一共有12种牌，最小牌在map中值为2，最大为14，为了方便计算，数组长度为15
 	count := [15]int{}
 	for i := 0; i < len(hand); i += 2 {
-		count[src.FaceRank[string(hand[i])]] += 1
+		count[FaceRank[string(hand[i])]] += 1
 	}
 
 	return count

@@ -2,11 +2,9 @@ package casino
 
 import (
 	"fmt"
-	"poker/src"
 )
 
 type Dealer struct {
-	Complete chan int
 }
 
 func (d *Dealer) Deal(hand1 string, hand2 string) ([]string, []string) {
@@ -30,7 +28,7 @@ func (*Dealer) Sort(hand string) string {
 	val := []byte(hand)
 	for i := 2; i < l; i += 2 {
 		for v := 0; v < i; v += 2 {
-			if src.FaceRank[string(val[v])] < src.FaceRank[string(val[i])] {
+			if FaceRank[string(val[v])] < FaceRank[string(val[i])] {
 				val[v], val[i] = val[i], val[v]
 				val[v+1], val[i+1] = val[i+1], val[v+1]
 			}
