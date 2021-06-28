@@ -59,36 +59,36 @@ func insertGhostHands(hands []string, handRank int) []string {
 		sb.Reset()
 		switch handRank {
 		case HandRank["一对"]: //  牌型为 XYZW
-			WriteString(sb, v[0:2], v)
+			writeString(sb, v[0:2], v)
 
 		case HandRank["三条"]: //  牌型为 XXYZ|YXXZ|YZXX
 			if v[0] == v[2] {
-				WriteString(sb, v[0:2], v)
+				writeString(sb, v[0:2], v)
 			} else if v[2] == v[4] {
-				WriteString(sb, v[0:2], v[2:4], v[2:6], v[6:8])
+				writeString(sb, v[0:2], v[2:4], v[2:6], v[6:8])
 			} else if v[4] == v[6] {
-				WriteString(sb, v, v[6:8])
+				writeString(sb, v, v[6:8])
 			}
 
 		case HandRank["葫芦"]: //  牌型为 XXYY
-			WriteString(sb, v[0:2], v)
+			writeString(sb, v[0:2], v)
 
 		case HandRank["四条"]: //  牌型为 XXXY|YXXX|XXXX
 			//  首尾相同即XXXX型
 			if v[0:1] == v[6:7] {
-				WriteString(sb, v, "As")
+				writeString(sb, v, "As")
 			} else if v[0:1] == v[2:3] {
-				WriteString(sb, v[0:2], v)
+				writeString(sb, v[0:2], v)
 			} else {
-				WriteString(sb, v, v[6:8])
+				writeString(sb, v, v[6:8])
 			}
 
 		case HandRank["同花"]: //  牌型为 XYZW
 			//  从A-2按顺序中找出一个手牌中不存在的牌
 			for _, k := range Faces {
 				if !strings.Contains(v, k) {
-					WriteString(sb, k, v[1:2], v)
-					str := Sort(sb.String())
+					writeString(sb, k, v[1:2], v)
+					str := sort(sb.String())
 					sb.Reset()
 					sb.WriteString(str)
 					break
@@ -105,7 +105,7 @@ func insertGhostHands(hands []string, handRank int) []string {
 			for i := 2; i < len(v); i += 2 {
 				cur := FaceRank[v[i:i+1]]
 				if last-cur == 2 {
-					WriteString(sb, v[0:i], FaceName[last-1], v[1:2], v[i:])
+					writeString(sb, v[0:i], FaceName[last-1], v[1:2], v[i:])
 					break
 				}
 				last = cur
@@ -116,7 +116,7 @@ func insertGhostHands(hands []string, handRank int) []string {
 				//  除非开头是A，否则始终往头部插入
 				if v[0] == 'A' {
 					//  开头为A时判断A5432牌型
-					WriteString(sb, v[0:1], v[2:3], v[4:5], v[6:7])
+					writeString(sb, v[0:1], v[2:3], v[4:5], v[6:7])
 					handFaces := sb.String()
 					sb.Reset()
 					if handFaces == "A432" || handFaces == "A532" || handFaces == "A542" || handFaces == "A543" {
@@ -126,10 +126,10 @@ func insertGhostHands(hands []string, handRank int) []string {
 							sb.WriteString("5s4s3s2sAh")
 						}
 					} else {
-						WriteString(sb, v, "T", v[1:2])
+						writeString(sb, v, "T", v[1:2])
 					}
 				} else {
-					WriteString(sb, FaceName[FaceRank[v[0:1]]+1], v[1:2], v)
+					writeString(sb, FaceName[FaceRank[v[0:1]]+1], v[1:2], v)
 				}
 			}
 		}
@@ -253,4 +253,3 @@ func getHandScoreTable(hand string) [5]string {
 	}
 	return table
 }
-

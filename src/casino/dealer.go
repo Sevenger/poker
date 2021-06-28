@@ -12,7 +12,7 @@ func (d *dealer) Deal(hand1 string, hand2 string) ([]string, []string) {
 }
 
 func (d *dealer) dealHand(handStr string) []string {
-	handStr = Sort(handStr)
+	handStr = sort(handStr)
 	var hands []string
 	//  如果有7张牌，获取7张牌所有可能的牌组合
 	if len(handStr) == 7*2 {
@@ -22,8 +22,6 @@ func (d *dealer) dealHand(handStr string) []string {
 	}
 	return hands
 }
-
-
 
 // sevenToFive 7选5 使用排列组合给出所有组合，对于鬼牌，判断4张牌可能组成的最大值
 func sevenToFive(hand string) []string {

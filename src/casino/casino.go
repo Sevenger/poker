@@ -15,13 +15,13 @@ func (c *Casino) Start(hand1, hand2 string) int {
 	return c.ResultJudge(handRst1, handRst2)
 }
 
-func WriteString(sb *strings.Builder, args ...string) {
+func writeString(sb *strings.Builder, args ...string) {
 	for _, v := range args {
 		sb.WriteString(v)
 	}
 }
 
-func Sort(hand string) string {
+func sort(hand string) string {
 	l := len(hand)
 
 	val := []byte(hand)

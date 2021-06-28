@@ -1,7 +1,7 @@
 package casino
 
 import (
-	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -115,9 +115,9 @@ func (*counter) hasFlush(hand string) bool {
 	var rst = true
 
 	//  通过前后数字相减差值判断是否连续
-	last := FaceRank[string(hand[0])]
+	last := FaceRank[hand[0:1]]
 	for i := 2; i < len(hand); i += 2 {
-		val := FaceRank[string(hand[i])]
+		val := FaceRank[hand[i:i+1]]
 		if last-1 != val {
 			rst = false
 			break
@@ -139,9 +139,9 @@ func (*counter) canBeFlush(hand string) bool {
 	var flag bool
 
 	//  通过前后数字相减差值判断连续，允许出现一次数字不连续且可补位
-	last := FaceRank[string(hand[0])]
+	last := FaceRank[hand[0:1]]
 	for i := 2; i < len(hand); i += 2 {
-		val := FaceRank[string(hand[i])]
+		val := FaceRank[hand[i:i+1]]
 
 		if last-1 != val {
 			if !flag && last-2 == val {
@@ -157,11 +157,10 @@ func (*counter) canBeFlush(hand string) bool {
 	//  2345A特殊判断
 	if hand[0] == 'A' {
 		sb := strings.Builder{}
-		for i := 0; i < len(hand); i+=2 {
+		for i := 0; i < len(hand); i += 2 {
 			sb.WriteString(hand[i : i+1])
 		}
 		handFaces := sb.String()
-		//handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
 		if handFaces == "A432" || handFaces == "A532" || handFaces == "A542" || handFaces == "A543" {
 			rst = true
 		}
@@ -223,5 +222,9 @@ func (*counter) getHandFaceCountTable(count [15]int) string {
 			card4++
 		}
 	}
-	return fmt.Sprintf("%d%d%d%d", card1, card2, card3, card4)
+
+	sb := new(strings.Builder)
+	writeString(sb, strconv.Itoa(card1), strconv.Itoa(card2), strconv.Itoa(card3), strconv.Itoa(card4))
+	return sb.String()
+	//return fmt.Sprintf("%d%d%d%d", card1, card2, card3, card4)
 }
