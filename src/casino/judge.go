@@ -78,9 +78,9 @@ func insertGhostHands(hands []string, handRank int) []string {
 			if v[0:1] == v[6:7] {
 				hand = fmt.Sprintf("%s%s", v, "As")
 			} else if v[0:1] == v[2:3] {
-				hand = fmt.Sprintf("%s%s", v, v[6:8])
+				hand = fmt.Sprintf("%s%s",  v[0:2], v)
 			} else {
-				hand = fmt.Sprintf("%s%s", v[0:2], v)
+				hand = fmt.Sprintf("%s%s", v, v[6:8])
 			}
 
 		case HandRank["同花"]: //  牌型为 XYZW
@@ -92,16 +92,17 @@ func insertGhostHands(hands []string, handRank int) []string {
 				}
 			}
 
-		case HandRank["皇家同花顺"]: //  牌型为 XYZW
+		case HandRank["顺子"]:
 			fallthrough
 		case HandRank["同花顺"]: //  牌型为 XYZW
+			fallthrough
+		case HandRank["皇家同花顺"]: //  牌型为 XYZW
 			//  判断是否往中间插入
 			last := FaceRank[v[0:1]]
 			for i := 2; i < len(v); i += 2 {
 				cur := FaceRank[v[i:i+1]]
 				if last-cur == 2 {
-					//  todo test this code
-					hand = fmt.Sprintf("%s%s%s%s", v[0:i], FaceName[last+1], v[1:2], v[i:])
+					hand = fmt.Sprintf("%s%s%s%s", v[0:i], FaceName[last-1], v[1:2], v[i:])
 					break
 				}
 				last = cur
@@ -127,7 +128,6 @@ func insertGhostHands(hands []string, handRank int) []string {
 				}
 			}
 		}
-
 		newHands = append(newHands, hand)
 	}
 
@@ -191,11 +191,11 @@ func (j *judge) getBestHand(hands []string, handRank int) (int, bool) {
 				fallthrough
 			case HandRank["一对"]:
 				bit1, bit2 = 2, 1
-			case HandRank["3条"]:
+			case HandRank["三条"]:
 				bit1, bit2 = 3, 1
 			case HandRank["葫芦"]:
 				bit1, bit2 = 3, 2
-			case HandRank["4条"]:
+			case HandRank["四条"]:
 				bit1, bit2 = 4, 1
 			}
 

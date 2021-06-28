@@ -156,7 +156,6 @@ func (*counter) canBeFlush(hand string) bool {
 	//  2345A特殊判断
 	if hand[0] == 'A' {
 		handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
-		fmt.Println(handFaces)
 		if handFaces == "A432" || handFaces == "A532" || handFaces == "A542" || handFaces == "A543" {
 			rst = true
 		}
