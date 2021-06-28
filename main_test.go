@@ -52,5 +52,4 @@ func TestSevenCard(t *testing.T) {
 			}
 		})
 	}
-
 }
