@@ -8,16 +8,6 @@ import (
 	"testing"
 )
 
-type Matches struct {
-	MatchSlice []Match `json:"matches"`
-}
-
-type Match struct {
-	Hand1  string `json:"alice"`
-	Hand2  string `json:"bob"`
-	Result int    `json:"result"`
-}
-
 func TestFiveCard(t *testing.T) {
 	var matches Matches
 	file, _ := ioutil.ReadFile("./input/match_result.json")

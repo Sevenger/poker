@@ -1,12 +1,41 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"poker/src/casino"
+	"time"
 )
 
 func main() {
 	c := casino.Casino{}
-	v := c.Start("5dThTsTdXn7s3s", "Ah8c5dThTsTdXn")
-	fmt.Println(v)
+	var matches Matches
+	var file []byte
+	file, _ = ioutil.ReadFile("./input/match_result.json")
+	_ = json.Unmarshal(file, &matches)
+	startTime := time.Now()
+	for _, v := range matches.MatchSlice {
+		c.Start(v.Hand1, v.Hand2)
+	}
+	endTime1 := time.Since(startTime)
+
+	file, _ = ioutil.ReadFile("./input/seven_cards_with_ghost.json")
+	_ = json.Unmarshal(file, &matches)
+	startTime = time.Now()
+	for _, v := range matches.MatchSlice {
+		c.Start(v.Hand1, v.Hand2)
+	}
+	endTime2 := time.Since(startTime)
+
+	file, _ = ioutil.ReadFile("./input/seven_cards_with_ghost.result.json")
+	_ = json.Unmarshal(file, &matches)
+	startTime = time.Now()
+	for _, v := range matches.MatchSlice {
+		c.Start(v.Hand1, v.Hand2)
+	}
+	endTime3 := time.Since(startTime)
+
+	fmt.Printf("FiveHand Spend:%v,\nSevenHand1 Spend:%v\nSevenHand2 Spend:%v\n", endTime1, endTime2, endTime3)
+
 }

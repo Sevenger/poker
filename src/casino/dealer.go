@@ -12,7 +12,7 @@ func (d *dealer) Deal(hand1 string, hand2 string) ([]string, []string) {
 }
 
 func (d *dealer) dealHand(handStr string) []string {
-	handStr = d.Sort(handStr)
+	handStr = d.sort(handStr)
 	var hands []string
 	//  如果有7张牌，获取7张牌所有可能的牌组合
 	if len(handStr) == 7*2 {
@@ -23,7 +23,7 @@ func (d *dealer) dealHand(handStr string) []string {
 	return hands
 }
 
-func (*dealer) Sort(hand string) string {
+func (*dealer) sort(hand string) string {
 	l := len(hand)
 
 	val := []byte(hand)
