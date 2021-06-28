@@ -2,6 +2,7 @@ package casino
 
 import (
 	"fmt"
+	"strings"
 )
 
 //counter 用于计算牌的牌型
@@ -10,7 +11,7 @@ type counter struct{}
 type CountRst struct {
 	Hand     []string
 	IsGhost  bool
-	HandType int
+	HandRank int
 }
 
 // QuickCount 计算牌型切片中最大的牌型
@@ -35,7 +36,7 @@ func (c *counter) QuickCount(hands []string) *CountRst {
 		}
 	}
 
-	return &CountRst{Hand: newHands, IsGhost: isGhost, HandType: maxType}
+	return &CountRst{Hand: newHands, IsGhost: isGhost, HandRank: maxType}
 }
 
 //isTongHua 判断是否是同花色
@@ -155,7 +156,12 @@ func (*counter) canBeFlush(hand string) bool {
 
 	//  2345A特殊判断
 	if hand[0] == 'A' {
-		handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
+		sb := strings.Builder{}
+		for i := 0; i < len(hand); i+=2 {
+			sb.WriteString(hand[i : i+1])
+		}
+		handFaces := sb.String()
+		//handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
 		if handFaces == "A432" || handFaces == "A532" || handFaces == "A542" || handFaces == "A543" {
 			rst = true
 		}
@@ -180,7 +186,11 @@ func (*counter) isRoyalFlush(hand string) bool {
 //canBeRoyalFlush 判断四手牌是否可能为皇家同花顺
 func (*counter) canBeRoyalFlush(hand string) bool {
 	var rst bool
-	handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
+	sb := strings.Builder{}
+	for i := 0; i < len(hand); i += 2 {
+		sb.WriteString(hand[i : i+1])
+	}
+	handFaces := sb.String()
 	if handFaces == "AKQJ" || handFaces == "AKQT" || handFaces == "AKJT" || handFaces == "AQJT" || handFaces == "KQJT" {
 		rst = true
 	}
@@ -213,6 +223,5 @@ func (*counter) getHandFaceCountTable(count [15]int) string {
 			card4++
 		}
 	}
-
 	return fmt.Sprintf("%d%d%d%d", card1, card2, card3, card4)
 }

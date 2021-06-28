@@ -1,7 +1,6 @@
 package casino
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -9,16 +8,16 @@ import (
 type judge struct{}
 
 func (j *judge) ResultJudge(countRst1, countRst2 *CountRst) int {
-	rank1, rank2 := countRst1.HandType, countRst2.HandType
+	rank1, rank2 := countRst1.HandRank, countRst2.HandRank
 	rst := j.quickJudge(rank1, rank2)
 	//  如果是平局，需要先计算出每一方的最大牌，再根据最大牌比较。皇家同花顺由于默认平局，无需判断
 	if rst == 0 && rank1 != HandRank["皇家同花顺"] {
 		//  如果是鬼牌则填充牌
 		if countRst1.IsGhost {
-			countRst1.Hand = insertGhostHands(countRst1.Hand, countRst1.HandType)
+			countRst1.Hand = insertGhostHands(countRst1.Hand, countRst1.HandRank)
 		}
 		if countRst2.IsGhost {
-			countRst2.Hand = insertGhostHands(countRst2.Hand, countRst2.HandType)
+			countRst2.Hand = insertGhostHands(countRst2.Hand, countRst2.HandRank)
 		}
 		rst = j.equalJudge(countRst1.Hand, countRst2.Hand, rank1)
 	}
@@ -54,40 +53,44 @@ func (j *judge) equalJudge(hands1, hands2 []string, handRank int) int {
 
 //insertGhostHands 手牌必须是排序的
 func insertGhostHands(hands []string, handRank int) []string {
+	sb := &strings.Builder{}
 	var newHands []string
 	for _, v := range hands {
-		var hand string
+		sb.Reset()
 		switch handRank {
 		case HandRank["一对"]: //  牌型为 XYZW
-			hand = fmt.Sprintf("%s%s", v[0:2], v)
+			WriteString(sb, v[0:2], v)
 
 		case HandRank["三条"]: //  牌型为 XXYZ|YXXZ|YZXX
 			if v[0] == v[2] {
-				hand = fmt.Sprintf("%s%s", v[0:2], v)
+				WriteString(sb, v[0:2], v)
 			} else if v[2] == v[4] {
-				hand = fmt.Sprintf("%s%s%s%s", v[0:2], v[2:4], v[2:6], v[6:8])
+				WriteString(sb, v[0:2], v[2:4], v[2:6], v[6:8])
 			} else if v[4] == v[6] {
-				hand = fmt.Sprintf("%s%s", v, v[6:8])
+				WriteString(sb, v, v[6:8])
 			}
 
 		case HandRank["葫芦"]: //  牌型为 XXYY
-			hand = fmt.Sprintf("%s%s", v[0:2], v)
+			WriteString(sb, v[0:2], v)
 
 		case HandRank["四条"]: //  牌型为 XXXY|YXXX|XXXX
 			//  首尾相同即XXXX型
 			if v[0:1] == v[6:7] {
-				hand = fmt.Sprintf("%s%s", v, "As")
+				WriteString(sb, v, "As")
 			} else if v[0:1] == v[2:3] {
-				hand = fmt.Sprintf("%s%s",  v[0:2], v)
+				WriteString(sb, v[0:2], v)
 			} else {
-				hand = fmt.Sprintf("%s%s", v, v[6:8])
+				WriteString(sb, v, v[6:8])
 			}
 
 		case HandRank["同花"]: //  牌型为 XYZW
 			//  从A-2按顺序中找出一个手牌中不存在的牌
 			for _, k := range Faces {
-				if !strings.Contains(hand, v) {
-					hand = fmt.Sprintf("%s%s%s", k, v[0:1], v)
+				if !strings.Contains(v, k) {
+					WriteString(sb, k, v[1:2], v)
+					str := Sort(sb.String())
+					sb.Reset()
+					sb.WriteString(str)
 					break
 				}
 			}
@@ -102,33 +105,35 @@ func insertGhostHands(hands []string, handRank int) []string {
 			for i := 2; i < len(v); i += 2 {
 				cur := FaceRank[v[i:i+1]]
 				if last-cur == 2 {
-					hand = fmt.Sprintf("%s%s%s%s", v[0:i], FaceName[last-1], v[1:2], v[i:])
+					WriteString(sb, v[0:i], FaceName[last-1], v[1:2], v[i:])
 					break
 				}
 				last = cur
 			}
 
 			//  如果hand长度为0说明需要在头或尾插入
-			if len(hand) == 0 {
+			if sb.Len() == 0 {
 				//  除非开头是A，否则始终往头部插入
 				if v[0] == 'A' {
 					//  开头为A时判断A5432牌型
-					handFaces := fmt.Sprintf("%s%s%s%s", v[0:1], v[2:3], v[4:5], v[6:7])
+					WriteString(sb, v[0:1], v[2:3], v[4:5], v[6:7])
+					handFaces := sb.String()
+					sb.Reset()
 					if handFaces == "A432" || handFaces == "A532" || handFaces == "A542" || handFaces == "A543" {
 						if handRank == FaceRank["同花顺"] {
-							hand = fmt.Sprintf("5s4s3s2sAs")
+							sb.WriteString("5s4s3s2sAs")
 						} else {
-							hand = fmt.Sprintf("5s4s3s2sAh")
+							sb.WriteString("5s4s3s2sAh")
 						}
 					} else {
-						hand = fmt.Sprintf("%s%s%s", v, "T", v[1:2])
+						WriteString(sb, v, "T", v[1:2])
 					}
 				} else {
-					hand = fmt.Sprintf("%s%s%s", FaceName[FaceRank[v[0:1]]+1], v[1:2], v)
+					WriteString(sb, FaceName[FaceRank[v[0:1]]+1], v[1:2], v)
 				}
 			}
 		}
-		newHands = append(newHands, hand)
+		newHands = append(newHands, sb.String())
 	}
 
 	return newHands
@@ -248,3 +253,4 @@ func getHandScoreTable(hand string) [5]string {
 	}
 	return table
 }
+

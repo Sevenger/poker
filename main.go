@@ -36,6 +36,5 @@ func main() {
 	}
 	endTime3 := time.Since(startTime)
 
-	fmt.Printf("FiveHand Spend:%v,\nSevenHand1 Spend:%v\nSevenHand2 Spend:%v\n", endTime1, endTime2, endTime3)
-
+	fmt.Printf("FiveHand Spend:%v\nSevenHand1 Spend:%v\nSevenHand2 Spend:%v\n", endTime1, endTime2, endTime3)
 }
