@@ -2,14 +2,19 @@ package casino
 
 import (
 	"fmt"
-	"strings"
 )
 
-type Counter struct {
+type counter struct {
+}
+
+type CountRst struct {
+	Hand     []string
+	IsGhost  bool
+	HandType int
 }
 
 // QuickCount 计算牌型切片中最大的牌型
-func (c *Counter) QuickCount(hands []string) *CountRst {
+func (c *counter) QuickCount(hands []string) *CountRst {
 	var newHands []string
 	isGhost := len(hands[0]) == 4*2
 	maxType := 0
@@ -17,9 +22,9 @@ func (c *Counter) QuickCount(hands []string) *CountRst {
 	var rank int
 	for _, v := range hands {
 		if isGhost {
-			rank = c.GetHostHandType(v)
+			rank = c.getHostHandRank(v)
 		} else {
-			rank = c.GetHandType(v)
+			rank = c.getHandRank(v)
 		}
 		if rank > maxType {
 			maxType = rank
@@ -33,7 +38,7 @@ func (c *Counter) QuickCount(hands []string) *CountRst {
 	return &CountRst{Hand: newHands, IsGhost: isGhost, HandType: maxType}
 }
 
-func (*Counter) IsTongHua(hand string) bool {
+func (*counter) isTongHua(hand string) bool {
 	rst := true
 
 	key := hand[1]
@@ -47,16 +52,16 @@ func (*Counter) IsTongHua(hand string) bool {
 	return rst
 }
 
-func (c *Counter) GetHandType(hand string) int {
-	code := c.GetHandFaceCountInfo(c.GetHandFaceCount(hand))
+func (c *counter) getHandRank(hand string) int {
+	code := c.getHandFaceCountInfo(c.getHandFaceCount(hand))
 	tp := FiveHandCount[code]
 
 	if tp == 1 {
-		hasFlush := c.HasFlush(hand)
-		isTongHua := c.IsTongHua(hand)
+		hasFlush := c.hasFlush(hand)
+		isTongHua := c.isTongHua(hand)
 		if hasFlush {
 			if isTongHua {
-				if c.IsRoyalFlush(hand) {
+				if c.isRoyalFlush(hand) {
 					tp = HandRank["皇家同花顺"]
 				} else {
 					tp = HandRank["同花顺"]
@@ -74,17 +79,17 @@ func (c *Counter) GetHandType(hand string) int {
 	return tp
 }
 
-func (c *Counter) GetHostHandType(hand string) int {
-	count := c.GetHandFaceCount(hand)
-	code := c.GetHandFaceCountInfo(count)
+func (c *counter) getHostHandRank(hand string) int {
+	count := c.getHandFaceCount(hand)
+	code := c.getHandFaceCountInfo(count)
 	tp := ForHandCount[code]
 
 	if tp == 1 {
-		canBeFlush := c.CanBeFlush(hand)
-		isTongHua := c.IsTongHua(hand)
+		canBeFlush := c.canBeFlush(hand)
+		isTongHua := c.isTongHua(hand)
 		if canBeFlush {
 			if isTongHua {
-				if c.CanBeRoyalFlush(hand) {
+				if c.canBeRoyalFlush(hand) {
 					tp = HandRank["皇家同花顺"]
 				} else {
 					tp = HandRank["同花顺"]
@@ -101,10 +106,11 @@ func (c *Counter) GetHostHandType(hand string) int {
 	return tp
 }
 
-// HasFlush 顺子必然是连续的
-func (*Counter) HasFlush(hand string) bool {
+// hasFlush 顺子必然是连续的
+func (*counter) hasFlush(hand string) bool {
 	var rst = true
 
+	//  通过前后数字相减差值判断是否连续
 	last := FaceRank[string(hand[0])]
 	for i := 2; i < len(hand); i += 2 {
 		val := FaceRank[string(hand[i])]
@@ -116,47 +122,45 @@ func (*Counter) HasFlush(hand string) bool {
 	}
 
 	//  A2345在德州扑克里是最小顺子，由于事先对手牌进行了排序，A总是出现在第一位，所以特殊判断
-	if strings.Contains(hand, "A") &&
-		strings.Contains(hand, "4") &&
-		strings.Contains(hand, "3") &&
-		strings.Contains(hand, "2") {
-		length := len(hand) / 2
-		if length == 5 {
-			strings.Contains(hand, "5")
-			rst = true
-		} else if length == 4 {
-			rst = true
-		}
+	if hand[0] == 'A' && hand[2] == '5' && hand[4] == '4' && hand[6] == '3' && hand[8] == '2' {
+		rst = true
 	}
 
 	return rst
 }
 
-func (*Counter) CanBeFlush(hand string) bool {
+func (*counter) canBeFlush(hand string) bool {
 	var rst = true
 	var flag bool
 
+	//  通过前后数字相减差值判断连续，允许出现一次数字不连续且可补位
 	last := FaceRank[string(hand[0])]
 	for i := 2; i < len(hand); i += 2 {
 		val := FaceRank[string(hand[i])]
-		if last-1 != val && !flag {
-			flag = true
-		} else {
-			rst = false
-			break
+
+		if last-1 != val {
+			if !flag && last-2 == val {
+				flag = true
+			} else {
+				rst = false
+				break
+			}
 		}
 		last = val
 	}
 
+	//  2345A特殊判断
 	if hand[0] == 'A' {
-		if hand == "A234" || hand == "A235" || hand == "A245" || hand == "A345" {
+		handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
+		fmt.Println(handFaces)
+		if handFaces == "A432" || handFaces == "A532" || handFaces == "A542" || handFaces == "A543" {
 			rst = true
 		}
 	}
 	return rst
 }
 
-func (*Counter) IsRoyalFlush(hand string) bool {
+func (*counter) isRoyalFlush(hand string) bool {
 	var rst bool
 	if hand[0] == 'A' &&
 		hand[2] == 'K' &&
@@ -169,17 +173,17 @@ func (*Counter) IsRoyalFlush(hand string) bool {
 	return rst
 }
 
-func (*Counter) CanBeRoyalFlush(hand string) bool {
+func (*counter) canBeRoyalFlush(hand string) bool {
 	var rst bool
-	str := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
-	if str == "AKQJ" || str == "AKQT" || str == "AKJT" || str == "AQJT" || str == "KQJT" {
+	handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
+	if handFaces == "AKQJ" || handFaces == "AKQT" || handFaces == "AKJT" || handFaces == "AQJT" || handFaces == "KQJT" {
 		rst = true
 	}
 	return rst
 }
 
-// GetHandFaceCount 计算手牌中每种牌出现的次数
-func (*Counter) GetHandFaceCount(hand string) [15]int {
+// getHandFaceCount 计算手牌中每种牌出现的次数
+func (*counter) getHandFaceCount(hand string) [15]int {
 	//  一共有12种牌，最小牌在map中值为2，最大为14，为了方便计算，数组长度为15
 	count := [15]int{}
 	for i := 0; i < len(hand); i += 2 {
@@ -189,8 +193,8 @@ func (*Counter) GetHandFaceCount(hand string) [15]int {
 	return count
 }
 
-// GetHandFaceCountInfo 计算每种牌出现的次数结果`中同点数牌的情况
-func (*Counter) GetHandFaceCountInfo(count [15]int) string {
+// getHandFaceCountInfo 计算每种牌出现的次数结果`中同点数牌的情况
+func (*counter) getHandFaceCountInfo(count [15]int) string {
 	var card1, card2, card3, card4 int
 	for _, v := range count {
 		switch v {

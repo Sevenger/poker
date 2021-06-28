@@ -4,25 +4,26 @@ import (
 	"fmt"
 )
 
-type Dealer struct {
+type dealer struct {
 }
 
-func (d *Dealer) Deal(hand1 string, hand2 string) ([]string, []string) {
-	return d.DealHand(d.Sort(hand1)), d.DealHand(d.Sort(hand2))
+func (d *dealer) Deal(hand1 string, hand2 string) ([]string, []string) {
+	return d.dealHand(hand1), d.dealHand(hand2)
 }
 
-func (d *Dealer) DealHand(handStr string) []string {
+func (d *dealer) dealHand(handStr string) []string {
+	handStr = d.Sort(handStr)
 	var hands []string
 	//  如果有7张牌，获取7张牌所有可能的牌组合
 	if len(handStr) == 14 {
-		hands = SevenToFive(handStr)
+		hands = sevenToFive(handStr)
 	} else {
 		hands = append(hands, handStr)
 	}
 	return hands
 }
 
-func (*Dealer) Sort(hand string) string {
+func (*dealer) Sort(hand string) string {
 	l := len(hand)
 
 	val := []byte(hand)
@@ -38,8 +39,8 @@ func (*Dealer) Sort(hand string) string {
 	return string(val)
 }
 
-// SevenToFive 7选5 使用穷举法给出排列组合，对于鬼牌，判断4张牌可能组成的最大值
-func SevenToFive(hand string) []string {
+// sevenToFive 7选5 使用穷举法给出排列组合，对于鬼牌，判断4张牌可能组成的最大值
+func sevenToFive(hand string) []string {
 	c1, c2, c3, c4, c5, c6, c7 := hand[0:2], hand[2:4], hand[4:6], hand[6:8], hand[8:10], hand[10:12], hand[12:14]
 	var hands []string
 	var format string

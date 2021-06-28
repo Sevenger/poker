@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	c := casino.NewCasino()
-	rst := c.Start("AsAhAcJsTc", "As2h3s4c5s")
-	rst2 := c.Start("AsKsQsJsTs", "QsQhQdQcJh")
-	fmt.Println(rst, rst2)
 
+	c := casino.Casino{}
+	rst := c.Start("6s5h4c3s2c", "As2h3s4c5s")
+	rst2 := c.Start("Ac9d6h3dTc", "2h6d8d7sJh")
+	fmt.Println(rst, rst2)
 }
