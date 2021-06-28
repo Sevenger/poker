@@ -5,8 +5,7 @@ import (
 	"strings"
 )
 
-//  比牌
-
+//judge 用于判断牌的大小
 type judge struct{}
 
 func (j *judge) ResultJudge(countRst1, countRst2 *CountRst) int {
@@ -151,11 +150,19 @@ func (j *judge) getBestHand(hands []string, handRank int) (int, bool) {
 	for i := 1; i < len(hands); i++ {
 		cur = hands[i]
 		switch handRank {
-		//  todo  可能有A5432的情况
 		case HandRank["顺子"]: //  顺子和同花顺只需要比较头牌
 			fallthrough
 		case HandRank["同花顺"]:
-			rst := whoIsMax(max[0:2], cur[0:2], 2)
+			maxFace := max[0:2]
+			curFace := cur[0:2]
+			//  处理A5432的情况
+			if max[0] == 'A' && max[2] == '5' {
+				maxFace = "5s"
+			}
+			if cur[0] == 'A' && cur[2] == '5' {
+				curFace = "5s"
+			}
+			rst := whoIsMax(maxFace, curFace, 2)
 			if rst == 2 {
 				max = cur
 				maxIndex = i

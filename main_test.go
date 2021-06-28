@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"poker/src/casino"
+	"strconv"
 	"testing"
 )
 
@@ -20,17 +20,12 @@ type Match struct {
 
 func TestFiveCard(t *testing.T) {
 	var matches Matches
-	file, err := ioutil.ReadFile("./input/match_result.json")
-	if err != nil {
-		t.Fatal("Read file error", err)
-	}
-	if err := json.Unmarshal(file, &matches); err != nil {
-		t.Fatal("Read json error", err)
-	}
+	file, _ := ioutil.ReadFile("./input/match_result.json")
+	_ = json.Unmarshal(file, &matches)
 
 	c := casino.Casino{}
 	for i, v := range matches.MatchSlice {
-		t.Run(fmt.Sprintf("Match %d", i), func(t *testing.T) {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			rst := c.Start(v.Hand1, v.Hand2)
 
 			if rst != v.Result {
@@ -43,17 +38,12 @@ func TestFiveCard(t *testing.T) {
 
 func TestSevenCard(t *testing.T) {
 	var matches Matches
-	file, err := ioutil.ReadFile("./input/seven_cards_with_ghost.json")
-	if err != nil {
-		t.Fatal("Read file error", err)
-	}
-	if err := json.Unmarshal(file, &matches); err != nil {
-		t.Fatal("Read json error", err)
-	}
+	file, _ := ioutil.ReadFile("./input/seven_cards_with_ghost.json")
+	_ = json.Unmarshal(file, &matches)
 
 	c := casino.Casino{}
 	for i, v := range matches.MatchSlice {
-		t.Run(fmt.Sprintf("Match %d", i), func(t *testing.T) {
+		t.Run(strconv.Itoa(i), func(t *testing.T) {
 			rst := c.Start(v.Hand1, v.Hand2)
 
 			if rst != v.Result {

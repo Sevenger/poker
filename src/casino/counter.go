@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-type counter struct {
-}
+//counter 用于计算牌的牌型
+type counter struct{}
 
 type CountRst struct {
 	Hand     []string
@@ -38,6 +38,7 @@ func (c *counter) QuickCount(hands []string) *CountRst {
 	return &CountRst{Hand: newHands, IsGhost: isGhost, HandType: maxType}
 }
 
+//isTongHua 判断是否是同花色
 func (*counter) isTongHua(hand string) bool {
 	rst := true
 
@@ -52,8 +53,9 @@ func (*counter) isTongHua(hand string) bool {
 	return rst
 }
 
+//getHandRank 得到5手牌的牌型
 func (c *counter) getHandRank(hand string) int {
-	code := c.getHandFaceCountInfo(c.getHandFaceCount(hand))
+	code := c.getHandFaceCountTable(c.getHandFaceCount(hand))
 	tp := FiveHandCount[code]
 
 	if tp == 1 {
@@ -79,9 +81,10 @@ func (c *counter) getHandRank(hand string) int {
 	return tp
 }
 
+//getHostHandRank 得到四手牌的牌型
 func (c *counter) getHostHandRank(hand string) int {
 	count := c.getHandFaceCount(hand)
-	code := c.getHandFaceCountInfo(count)
+	code := c.getHandFaceCountTable(count)
 	tp := ForHandCount[code]
 
 	if tp == 1 {
@@ -106,7 +109,7 @@ func (c *counter) getHostHandRank(hand string) int {
 	return tp
 }
 
-// hasFlush 顺子必然是连续的
+//hasFlush 顺子必然是连续的
 func (*counter) hasFlush(hand string) bool {
 	var rst = true
 
@@ -129,6 +132,7 @@ func (*counter) hasFlush(hand string) bool {
 	return rst
 }
 
+//canBeFlush 判读四手牌是否是连续的
 func (*counter) canBeFlush(hand string) bool {
 	var rst = true
 	var flag bool
@@ -160,6 +164,7 @@ func (*counter) canBeFlush(hand string) bool {
 	return rst
 }
 
+//isRoyalFlush 判断五手牌是否可能为皇家同花顺
 func (*counter) isRoyalFlush(hand string) bool {
 	var rst bool
 	if hand[0] == 'A' &&
@@ -173,6 +178,7 @@ func (*counter) isRoyalFlush(hand string) bool {
 	return rst
 }
 
+//canBeRoyalFlush 判断四手牌是否可能为皇家同花顺
 func (*counter) canBeRoyalFlush(hand string) bool {
 	var rst bool
 	handFaces := fmt.Sprintf("%s%s%s%s", hand[0:1], hand[2:3], hand[4:5], hand[6:7])
@@ -182,7 +188,7 @@ func (*counter) canBeRoyalFlush(hand string) bool {
 	return rst
 }
 
-// getHandFaceCount 计算手牌中每种牌出现的次数
+//getHandFaceCount 计算手牌中每种牌出现的次数
 func (*counter) getHandFaceCount(hand string) [15]int {
 	//  一共有12种牌，最小牌在map中值为2，最大为14，为了方便计算，数组长度为15
 	count := [15]int{}
@@ -193,8 +199,8 @@ func (*counter) getHandFaceCount(hand string) [15]int {
 	return count
 }
 
-// getHandFaceCountInfo 计算每种牌出现的次数结果`中同点数牌的情况
-func (*counter) getHandFaceCountInfo(count [15]int) string {
+//getHandFaceCountTable 计算出现1次至4次的牌的情况
+func (*counter) getHandFaceCountTable(count [15]int) string {
 	var card1, card2, card3, card4 int
 	for _, v := range count {
 		switch v {

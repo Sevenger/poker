@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-type dealer struct {
-}
+//dealer 用于发牌
+type dealer struct{}
 
 func (d *dealer) Deal(hand1 string, hand2 string) ([]string, []string) {
 	return d.dealHand(hand1), d.dealHand(hand2)
@@ -15,7 +15,7 @@ func (d *dealer) dealHand(handStr string) []string {
 	handStr = d.Sort(handStr)
 	var hands []string
 	//  如果有7张牌，获取7张牌所有可能的牌组合
-	if len(handStr) == 14 {
+	if len(handStr) == 7*2 {
 		hands = sevenToFive(handStr)
 	} else {
 		hands = append(hands, handStr)
@@ -45,12 +45,12 @@ func sevenToFive(hand string) []string {
 	var hands []string
 	var format string
 
-	//  有鬼牌时鬼牌必选，从剩下的6张牌选4张，一共有15种可能
+	//  有鬼牌时鬼牌必选，从剩下的6张牌选4张，一共有C4/6=15种可能
 	if hand[0] == 'X' {
 		format = "%s%s%s%s"
 		hands = append(hands, fmt.Sprintf(format, c2, c3, c4, c5), fmt.Sprintf(format, c2, c3, c4, c6), fmt.Sprintf(format, c2, c3, c4, c7), fmt.Sprintf(format, c2, c3, c5, c6), fmt.Sprintf(format, c2, c3, c5, c7), fmt.Sprintf(format, c2, c3, c6, c7), fmt.Sprintf(format, c2, c4, c5, c6), fmt.Sprintf(format, c2, c4, c5, c7), fmt.Sprintf(format, c2, c4, c6, c7), fmt.Sprintf(format, c2, c5, c6, c7), fmt.Sprintf(format, c3, c4, c5, c6), fmt.Sprintf(format, c3, c4, c5, c7), fmt.Sprintf(format, c3, c4, c6, c7), fmt.Sprintf(format, c3, c5, c6, c7), fmt.Sprintf(format, c4, c5, c6, c7))
 	} else {
-		//  无鬼牌时从7张牌中选5张，一共有21种可能
+		//  无鬼牌时从7张牌中选5张，一共有C5/7=21种可能
 		format = "%s%s%s%s%s"
 		hands = append(hands, fmt.Sprintf(format, c1, c2, c3, c4, c5), fmt.Sprintf(format, c1, c2, c3, c4, c6), fmt.Sprintf(format, c1, c2, c3, c4, c7), fmt.Sprintf(format, c1, c2, c3, c5, c6), fmt.Sprintf(format, c1, c2, c3, c5, c7), fmt.Sprintf(format, c1, c2, c3, c6, c7), fmt.Sprintf(format, c1, c2, c4, c5, c6), fmt.Sprintf(format, c1, c2, c4, c5, c7), fmt.Sprintf(format, c1, c2, c4, c6, c7), fmt.Sprintf(format, c1, c2, c5, c6, c7), fmt.Sprintf(format, c1, c3, c4, c5, c6), fmt.Sprintf(format, c1, c3, c4, c5, c7), fmt.Sprintf(format, c1, c3, c4, c6, c7), fmt.Sprintf(format, c1, c3, c5, c6, c7), fmt.Sprintf(format, c1, c4, c5, c6, c7), fmt.Sprintf(format, c2, c3, c4, c5, c6), fmt.Sprintf(format, c2, c3, c4, c5, c7), fmt.Sprintf(format, c2, c3, c4, c6, c7), fmt.Sprintf(format, c2, c3, c5, c6, c7), fmt.Sprintf(format, c2, c4, c5, c6, c7), fmt.Sprintf(format, c3, c4, c5, c6, c7))
 	}
