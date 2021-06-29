@@ -7,7 +7,7 @@ import (
 //judge 用于判断牌的大小
 type judge struct{}
 
-func (j *judge) ResultJudge(countRst1, countRst2 *CountRst) int {
+func (j *judge) ResultJudge(countRst1, countRst2 *countRst) int {
 	rank1, rank2 := countRst1.HandRank, countRst2.HandRank
 	rst := j.quickJudge(rank1, rank2)
 	//  如果是平局，需要先计算出每一方的最大牌，再根据最大牌比较。皇家同花顺由于默认平局，无需判断

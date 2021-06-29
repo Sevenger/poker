@@ -8,14 +8,14 @@ import (
 //counter 用于计算牌的牌型
 type counter struct{}
 
-type CountRst struct {
+type countRst struct {
 	Hand     []string
 	IsGhost  bool
 	HandRank int
 }
 
 // QuickCount 计算牌型切片中最大的牌型
-func (c *counter) QuickCount(hands []string) *CountRst {
+func (c *counter) QuickCount(hands []string) *countRst {
 	var newHands []string
 	isGhost := len(hands[0]) == 4*2
 	maxType := 0
@@ -36,7 +36,7 @@ func (c *counter) QuickCount(hands []string) *CountRst {
 		}
 	}
 
-	return &CountRst{Hand: newHands, IsGhost: isGhost, HandRank: maxType}
+	return &countRst{Hand: newHands, IsGhost: isGhost, HandRank: maxType}
 }
 
 //isTongHua 判断是否是同花色

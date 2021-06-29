@@ -19,32 +19,35 @@ type Match struct {
 }
 
 func main() {
-	c := casino.Casino{}
+	startTime := time.Now()
+	spendTimeFiveHand := test("./input/match_result.json")
+	spendTimeSevenHand1 := test("./input/seven_cards_with_ghost.json")
+	spendTimeSevenHand2 := test("./input/seven_cards_with_ghost.result.json")
+	spendTimeAll := time.Since(startTime)
+
+	fmt.Printf("FiveHand Spend:%v\n"+
+		"SevenHand1 Spend:%v\n"+
+		"SevenHand2 Spend:%v\n"+
+		"All Spend:%v",
+		spendTimeFiveHand, spendTimeSevenHand1, spendTimeSevenHand2, spendTimeAll)
+}
+
+func test(filePath string) time.Duration {
 	var matches Matches
-	var file []byte
-	file, _ = ioutil.ReadFile("./input/match_result.json")
-	_ = json.Unmarshal(file, &matches)
+	c := casino.Casino{}
+	file, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	if err = json.Unmarshal(file, &matches); err != nil {
+		panic(err)
+	}
+
 	startTime := time.Now()
 	for _, v := range matches.MatchSlice {
-		c.Start(v.Hand1, v.Hand2)
+		if c.Start(v.Hand1, v.Hand2) != v.Result {
+			panic("Result not equal")
+		}
 	}
-	endTime1 := time.Since(startTime)
-
-	file, _ = ioutil.ReadFile("./input/seven_cards_with_ghost.json")
-	_ = json.Unmarshal(file, &matches)
-	startTime = time.Now()
-	for _, v := range matches.MatchSlice {
-		c.Start(v.Hand1, v.Hand2)
-	}
-	endTime2 := time.Since(startTime)
-
-	file, _ = ioutil.ReadFile("./input/seven_cards_with_ghost.result.json")
-	_ = json.Unmarshal(file, &matches)
-	startTime = time.Now()
-	for _, v := range matches.MatchSlice {
-		c.Start(v.Hand1, v.Hand2)
-	}
-	endTime3 := time.Since(startTime)
-
-	fmt.Printf("FiveHand Spend:%v\nSevenHand1 Spend:%v\nSevenHand2 Spend:%v\n", endTime1, endTime2, endTime3)
+	return time.Since(startTime)
 }
