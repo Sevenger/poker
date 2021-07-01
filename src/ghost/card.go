@@ -81,7 +81,7 @@ var ForHandCount = map[string]int{
 	"4000": 1,
 }
 
-var SevenHandCount = map[string]int{
+var SevenHandCountCode = map[string]int{
 	"0011": HandRank["四条"],
 	"1101": HandRank["四条"],
 	"3001": HandRank["四条"],
@@ -96,7 +96,7 @@ var SevenHandCount = map[string]int{
 	"7000": HandRank["高牌"], //  ABCDEFG
 }
 
-var GhostHandCount = map[string]int{
+var GhostHandCountCode = map[string]int{
 	"0101": HandRank["四条"],
 	"2001": HandRank["四条"],
 	"0020": HandRank["四条"],
@@ -109,21 +109,34 @@ var GhostHandCount = map[string]int{
 	"6000": HandRank["两对"], //可能为顺子、同花、同花顺、皇家同花顺
 }
 
-func writeString(sb *strings.Builder, args ...string) {
-	for _, v := range args {
-		sb.WriteString(v)
-	}
+var sb, s1, s2, s3, s4 strings.Builder
+
+func init() {
+	sb.Grow(5)
+	s1.Grow(5)
+	s2.Grow(5)
+	s3.Grow(5)
+	s4.Grow(5)
 }
 
 func sort(hand string) string {
 	runes := []rune(hand)
-	////  insert sort
+	//  insert sort
+	//l := len(hand)
+	//for i := 2; i < l; i += 2 {
+	//	for v := 0; v < i; v += 2 {
+	//		if FaceRank[string(runes[v])] < FaceRank[string(runes[i])] {
+	//			runes[v], runes[i] = runes[i], runes[v]
+	//			runes[v+1], runes[i+1] = runes[i+1], runes[v+1]
+	//		}
+	//	}
+	//}
+
 	l := len(hand)
-	for i := 2; i < l; i += 2 {
-		for v := 0; v < i; v += 2 {
+	for i := 1; i < l; i++ {
+		for v := 0; v < i; v++ {
 			if FaceRank[string(runes[v])] < FaceRank[string(runes[i])] {
 				runes[v], runes[i] = runes[i], runes[v]
-				runes[v+1], runes[i+1] = runes[i+1], runes[v+1]
 			}
 		}
 	}
@@ -156,4 +169,14 @@ func partition(hand []rune, low, high int) int {
 	(hand)[low] = pivot
 	hand[low+1] = p2
 	return low
+}
+
+func max(x, y int) (int, bool) {
+	if x > y {
+		return 1, false
+	} else if x < y {
+		return 2, false
+	} else {
+		return 0, true
+	}
 }

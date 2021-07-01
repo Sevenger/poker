@@ -63,3 +63,10 @@ func hasA2345(hand string) bool {
 		strings.Contains(hand, "4") &&
 		strings.Contains(hand, "5")
 }
+
+func Test_counterG_maybeIsStraightByNoDuplicate(t *testing.T) {
+	hand := "QJ987A"
+	c := counterG{}
+	newhand, maybe := c.maybeIsStraightByNoDuplicate(hand)
+	fmt.Println(newhand, maybe)
+}
