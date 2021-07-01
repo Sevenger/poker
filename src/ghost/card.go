@@ -1,4 +1,4 @@
-package counter7
+package counterG
 
 import "strings"
 
@@ -94,6 +94,19 @@ var SevenHandCount = map[string]int{
 	"3200": HandRank["两对"], //  AABBCDE
 	"5100": HandRank["一对"], //  AABCDEF
 	"7000": HandRank["高牌"], //  ABCDEFG
+}
+
+var GhostHandCount = map[string]int{
+	"0101": HandRank["四条"],
+	"2001": HandRank["四条"],
+	"0020": HandRank["四条"],
+	"1110": HandRank["四条"],
+	"0300": HandRank["葫芦"],
+	//  非确定
+	"3010": HandRank["四条"], //可能为同花顺、皇家同花顺
+	"2200": HandRank["葫芦"], //可能为同花顺、皇家同花顺
+	"4100": HandRank["三条"], //可能为顺子、同花、同花顺、皇家同花顺
+	"6000": HandRank["两对"], //可能为顺子、同花、同花顺、皇家同花顺
 }
 
 func writeString(sb *strings.Builder, args ...string) {
