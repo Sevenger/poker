@@ -4,21 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	. "poker/src"
 	"poker/src/casino"
 	"time"
 )
 
-type Matches struct {
-	MatchSlice []Match `json:"matches"`
-}
-
-type Match struct {
-	Hand1  string `json:"alice"`
-	Hand2  string `json:"bob"`
-	Result int    `json:"result"`
-}
-
 func main() {
+	c := casino.Casino{}
+	rst := c.Start("7c5sAd7h6c2hKh", "4s8c7c5sAd7h6c")
+	fmt.Println(rst)
+
 	startTime := time.Now()
 	spendTimeFiveHand := test("./input/match_result.json")
 	spendTimeSevenHand1 := test("./input/seven_cards_with_ghost.json")
@@ -30,6 +25,7 @@ func main() {
 		"SevenHand2 Spend:%v\n"+
 		"All Spend:%v",
 		spendTimeFiveHand, spendTimeSevenHand1, spendTimeSevenHand2, spendTimeAll)
+
 }
 
 func test(filePath string) time.Duration {

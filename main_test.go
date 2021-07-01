@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	. "poker/src"
 	"poker/src/casino"
 	"strconv"
 	"testing"
