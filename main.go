@@ -32,10 +32,15 @@ func testFiveHandsSpend(filePath string) time.Duration {
 		panic(err)
 	}
 	counter := fivehand.Counter{}
+	var rst int
 
 	startTime := time.Now()
 	for _, v := range matches.MatchSlice {
-		counter.Start(v.Hand1, v.Hand2)
+		if rst = counter.Start(v.Hand1, v.Hand2); rst != v.Result {
+			fmt.Printf("Resuel not equal.Hand1:%s Hand2:%s Want:%d Output:%d",
+				v.Hand1, v.Hand2, v.Result, rst,
+			)
+		}
 	}
 	return time.Since(startTime)
 }
@@ -50,10 +55,15 @@ func testSevenHandsSpend(filePath string) time.Duration {
 		panic(err)
 	}
 	counter := sevenhand.Counter{}
+	var rst int
 
 	startTime := time.Now()
 	for _, v := range matches.MatchSlice {
-		counter.Start(v.Hand1, v.Hand2)
+		if rst = counter.Start(v.Hand1, v.Hand2); rst != v.Result {
+			fmt.Printf("Resuel not equal.Hand1:%s Hand2:%s Want:%d Output:%d",
+				v.Hand1, v.Hand2, v.Result, rst,
+			)
+		}
 	}
 	return time.Since(startTime)
 }
@@ -68,10 +78,15 @@ func testGhostHandsSpend(filePath string) time.Duration {
 		panic(err)
 	}
 	counter := sevenhand.Counter{}
+	var rst int
 
 	startTime := time.Now()
 	for _, v := range matches.MatchSlice {
-		counter.Start(v.Hand1, v.Hand2)
+		if rst = counter.Start(v.Hand1, v.Hand2); rst != v.Result {
+			fmt.Printf("Resuel not equal.Hand1:%s Hand2:%s Want:%d Output:%d",
+				v.Hand1, v.Hand2, v.Result, rst,
+			)
+		}
 	}
 	return time.Since(startTime)
 }
