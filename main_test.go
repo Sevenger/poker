@@ -4,61 +4,64 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	. "poker/src"
-	"poker/src/casino"
-	"strconv"
+	"poker/src/fivehand"
+	"poker/src/sevenhand"
 	"testing"
 )
 
-func TestFiveCard(t *testing.T) {
+func TestFiveCards_Result(t *testing.T) {
 	var matches Matches
-	file, _ := ioutil.ReadFile("./input/match_result.json")
-	_ = json.Unmarshal(file, &matches)
+	file, err := ioutil.ReadFile("./input/five_cards.json")
+	if err != nil {
+		panic(err)
+	}
+	if err = json.Unmarshal(file, &matches); err != nil {
+		panic(err)
+	}
+	counter := fivehand.Counter{}
 
-	c := casino.Casino{}
 	for i, v := range matches.MatchSlice {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			rst := c.Start(v.Hand1, v.Hand2)
-
-			if rst != v.Result {
-				t.Fatalf("ID: %d h1: %v, h2: %v. 预期结果: %d 输出结果: %d",
-					i, v.Hand1, v.Hand2, v.Result, rst)
-			}
-		})
+		if rst := counter.Start(v.Hand1, v.Hand2); rst != v.Result {
+			t.Fatalf("ID: %d h1: %v, h2: %v. 预期结果: %d 输出结果: %d",
+				i, v.Hand1, v.Hand2, v.Result, rst)
+		}
 	}
 }
 
-func TestSevenCard(t *testing.T) {
+func TestSevenCards_Result(t *testing.T) {
 	var matches Matches
-	file, _ := ioutil.ReadFile("./input/seven_cards_with_ghost.json")
-	_ = json.Unmarshal(file, &matches)
+	file, err := ioutil.ReadFile("./input/seven_cards.json")
+	if err != nil {
+		panic(err)
+	}
+	if err = json.Unmarshal(file, &matches); err != nil {
+		panic(err)
+	}
+	counter := sevenhand.Counter{}
 
-	c := casino.Casino{}
 	for i, v := range matches.MatchSlice {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			rst := c.Start(v.Hand1, v.Hand2)
-
-			if rst != v.Result {
-				t.Fatalf("ID: %d h1: %v, h2: %v. 预期结果: %d 输出结果: %d",
-					i, v.Hand1, v.Hand2, v.Result, rst)
-			}
-		})
+		if rst := counter.Start(v.Hand1, v.Hand2); rst != v.Result {
+			t.Fatalf("ID: %d h1: %v, h2: %v. 预期结果: %d 输出结果: %d",
+				i, v.Hand1, v.Hand2, v.Result, rst)
+		}
 	}
 }
 
-func TestSevenCard2(t *testing.T) {
+func TestSevenCardsWithGhost_Result(t *testing.T) {
 	var matches Matches
-	file, _ := ioutil.ReadFile("./input/seven_cards_with_ghost.result.json")
-	_ = json.Unmarshal(file, &matches)
+	file, err := ioutil.ReadFile("./input/seven_cards_with_ghost.json")
+	if err != nil {
+		panic(err)
+	}
+	if err = json.Unmarshal(file, &matches); err != nil {
+		panic(err)
+	}
+	counter := sevenhand.Counter{}
 
-	c := casino.Casino{}
 	for i, v := range matches.MatchSlice {
-		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			rst := c.Start(v.Hand1, v.Hand2)
-
-			if rst != v.Result {
-				t.Fatalf("ID: %d h1: %v, h2: %v. 预期结果: %d 输出结果: %d",
-					i, v.Hand1, v.Hand2, v.Result, rst)
-			}
-		})
+		if rst := counter.Start(v.Hand1, v.Hand2); rst != v.Result {
+			t.Fatalf("ID: %d h1: %v, h2: %v. 预期结果: %d 输出结果: %d",
+				i, v.Hand1, v.Hand2, v.Result, rst)
+		}
 	}
 }

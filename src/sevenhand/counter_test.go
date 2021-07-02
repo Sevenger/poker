@@ -1,4 +1,4 @@
-package counterG
+package sevenhand
 
 import (
 	"encoding/json"
@@ -13,10 +13,10 @@ import (
 //  测试7手牌耗费时间
 func TestCounterG_SevenHand_Spend_Time(t *testing.T) {
 	var matches Matches
-	file, _ := ioutil.ReadFile("../../input/seven_cards_with_ghost.json")
+	file, _ := ioutil.ReadFile("../../input/seven_cards.json")
 	_ = json.Unmarshal(file, &matches)
 
-	c := counterG{}
+	c := Counter{}
 	startTime := time.Now()
 	for _, v := range matches.MatchSlice {
 		c.Start(v.Hand1, v.Hand2)
@@ -28,16 +28,14 @@ func TestCounterG_SevenHand_Spend_Time(t *testing.T) {
 //  测试7手牌判断是否正确
 func TestCounterG_SevenHand_Result(t *testing.T) {
 	var matches Matches
-	file, _ := ioutil.ReadFile("../../input/seven_cards_with_ghost.json")
+	file, _ := ioutil.ReadFile("../../input/seven_cards.json")
 	_ = json.Unmarshal(file, &matches)
 
-	c := counterG{}
+	c := Counter{}
 	errCount := 0
 	for i, v := range matches.MatchSlice {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			fmt.Println(v.Hand1, v.Hand2)
 			rst := c.Start(v.Hand1, v.Hand2)
-
 			if rst != v.Result {
 				errCount++
 				t.Fatalf("ID: %d h1: %v, h2: %v. 预期结果: %d 输出结果: %d",
@@ -51,10 +49,10 @@ func TestCounterG_SevenHand_Result(t *testing.T) {
 //  测试鬼牌耗费时间
 func TestCounterG_GhostHand_Spend_Time(t *testing.T) {
 	var matches Matches
-	file, _ := ioutil.ReadFile("../../input/seven_cards_with_ghost.result.json")
+	file, _ := ioutil.ReadFile("../../input/seven_cards_with_ghost.json")
 	_ = json.Unmarshal(file, &matches)
 
-	c := counterG{}
+	c := Counter{}
 	startTime := time.Now()
 	for _, v := range matches.MatchSlice {
 		c.Start(v.Hand1, v.Hand2)
@@ -66,14 +64,13 @@ func TestCounterG_GhostHand_Spend_Time(t *testing.T) {
 //  鬼牌判断是否正确
 func TestCounterG_GhostHand_Result(t *testing.T) {
 	var matches Matches
-	file, _ := ioutil.ReadFile("../../input/seven_cards_with_ghost.result.json")
+	file, _ := ioutil.ReadFile("../../input/seven_cards_with_ghost.json")
 	_ = json.Unmarshal(file, &matches)
 
-	c := counterG{}
+	c := Counter{}
 	errCount := 0
 	for i, v := range matches.MatchSlice {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			fmt.Println(v.Hand1, v.Hand2)
 			rst := c.Start(v.Hand1, v.Hand2)
 
 			if rst != v.Result {
@@ -87,7 +84,7 @@ func TestCounterG_GhostHand_Result(t *testing.T) {
 }
 
 func TestCounterG_ByHand(t *testing.T) {
-	c := counterG{}
+	c := Counter{}
 	hand1, hand2 := "XnAs9c7dTs8sKc", "Jc4hXnAs9c7dTs"
 	result := 0
 	rst := c.Start(hand1, hand2)

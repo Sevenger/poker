@@ -9,11 +9,13 @@ import (
 //一共有13种牌(含鬼牌)，最小牌在map中值为2，最大为15，为了方便计算，数组长度为16
 type FaceCount [16]int
 
-type FaceCountCode string
-
-type FaceCountMap map[int][]int
-
-var Sb, S1, S2, S3, S4 strings.Builder
+var (
+	Sb strings.Builder
+	S1 strings.Builder
+	S2 strings.Builder
+	S3 strings.Builder
+	S4 strings.Builder
+)
 
 func init() {
 	Sb.Grow(5)
@@ -22,8 +24,6 @@ func init() {
 	S3.Grow(5)
 	S4.Grow(5)
 }
-
-var Faces = []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}
 
 var FaceRank = map[string]int{
 	"2": 2,
@@ -72,19 +72,6 @@ var HandRank = map[string]int{
 	"高牌":    1,
 }
 
-var HandName = map[int]string{
-	10: "皇家同花顺",
-	9:  "同花顺",
-	8:  "四条",
-	7:  "葫芦",
-	6:  "同花",
-	5:  "顺子",
-	4:  "三条",
-	3:  "两对",
-	2:  "一对",
-	1:  "高牌",
-}
-
 var FiveHandCount = map[string]int{
 	"1001": HandRank["四条"], // 8
 	"0110": HandRank["葫芦"], // 7
@@ -126,17 +113,6 @@ var GhostHandCountCode = map[string]int{
 // Sort 对手牌进行排序，由于手牌最少长4，最多长7，插入排序性能更好
 func Sort(hand string) string {
 	runes := []rune(hand)
-	//  insert sort
-	//l := len(hand)
-	//for i := 2; i < l; i += 2 {
-	//	for v := 0; v < i; v += 2 {
-	//		if FaceRank[string(runes[v])] < FaceRank[string(runes[i])] {
-	//			runes[v], runes[i] = runes[i], runes[v]
-	//			runes[v+1], runes[i+1] = runes[i+1], runes[v+1]
-	//		}
-	//	}
-	//}
-
 	l := len(hand)
 	for i := 1; i < l; i++ {
 		for v := 0; v < i; v++ {
@@ -146,34 +122,7 @@ func Sort(hand string) string {
 		}
 	}
 
-	//quickSort(runes, 0, len(runes)-2)
 	return string(runes)
-}
-
-func quickSort(hand []rune, low, high int) {
-	if low < high {
-		pivot := partition(hand, low, high)
-		quickSort(hand, low, pivot-2)
-		quickSort(hand, pivot+2, high)
-	}
-}
-
-func partition(hand []rune, low, high int) int {
-	pivot := (hand)[low]
-	p2 := hand[low+1]
-	for low < high {
-		for low < high && FaceRank[string(hand[high])] >= FaceRank[string(hand[low])] {
-			high -= 2
-		}
-		(hand)[low], hand[low+1] = (hand)[high], hand[high+1]
-		for low < high && FaceRank[string(hand[low])] <= FaceRank[string(hand[high])] {
-			low += 2
-		}
-		(hand)[high], (hand)[high+1] = (hand)[low], (hand)[low+1]
-	}
-	(hand)[low] = pivot
-	hand[low+1] = p2
-	return low
 }
 
 func Max(x, y int) (int, bool) {

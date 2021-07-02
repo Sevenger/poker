@@ -5,28 +5,25 @@ import (
 	"fmt"
 	"io/ioutil"
 	. "poker/src"
-	"poker/src/casino"
+	"poker/src/fivehand"
+	"poker/src/sevenhand"
 	"time"
 )
 
+// 结果比较在main_test.go里
 func main() {
-	startTime := time.Now()
-	spendTimeFiveHand := testFiveHand("./input/match_result.json")
-	spendTimeSevenHand1 := testFiveHand("./input/seven_cards_with_ghost.json")
-	spendTimeSevenHand2 := testFiveHand("./input/seven_cards_with_ghost.result.json")
-	spendTimeAll := time.Since(startTime)
+	fiveHandSpend := testFiveHandsSpend("./input/five_cards.json")
+	sevenHandSpend := testSevenHandsSpend("./input/seven_cards.json")
+	ghostHandSpend := testGhostHandsSpend("./input/seven_cards_with_ghost.json")
 
-	fmt.Printf("FiveHand Spend:%v\n"+
-		"SevenHand1 Spend:%v\n"+
-		"SevenHand2 Spend:%v\n"+
-		"All Spend:%v",
-		spendTimeFiveHand, spendTimeSevenHand1, spendTimeSevenHand2, spendTimeAll)
-
+	fmt.Printf("五手牌耗时：%v\n"+
+		"七手牌耗时：%v\n"+
+		"癞子牌耗时：%v\n",
+		fiveHandSpend, sevenHandSpend, ghostHandSpend)
 }
 
-func testFiveHand(filePath string) time.Duration {
+func testFiveHandsSpend(filePath string) time.Duration {
 	var matches Matches
-	c := casino.Casino{}
 	file, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		panic(err)
@@ -34,12 +31,47 @@ func testFiveHand(filePath string) time.Duration {
 	if err = json.Unmarshal(file, &matches); err != nil {
 		panic(err)
 	}
+	counter := fivehand.Counter{}
 
 	startTime := time.Now()
 	for _, v := range matches.MatchSlice {
-		if c.Start(v.Hand1, v.Hand2) != v.Result {
-			panic("Result not equal")
-		}
+		counter.Start(v.Hand1, v.Hand2)
+	}
+	return time.Since(startTime)
+}
+
+func testSevenHandsSpend(filePath string) time.Duration {
+	var matches Matches
+	file, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	if err = json.Unmarshal(file, &matches); err != nil {
+		panic(err)
+	}
+	counter := sevenhand.Counter{}
+
+	startTime := time.Now()
+	for _, v := range matches.MatchSlice {
+		counter.Start(v.Hand1, v.Hand2)
+	}
+	return time.Since(startTime)
+}
+
+func testGhostHandsSpend(filePath string) time.Duration {
+	var matches Matches
+	file, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	if err = json.Unmarshal(file, &matches); err != nil {
+		panic(err)
+	}
+	counter := sevenhand.Counter{}
+
+	startTime := time.Now()
+	for _, v := range matches.MatchSlice {
+		counter.Start(v.Hand1, v.Hand2)
 	}
 	return time.Since(startTime)
 }

@@ -1,18 +1,15 @@
-package counterG
+package sevenhand
 
 import (
+	. "poker/src"
 	"strconv"
 	"strings"
 )
 
-//counterG 计算7手牌和鬼牌
-type counterG struct{}
+//Counter 计算7手牌和鬼牌
+type Counter struct{}
 
-//FaceCount 用于记录手牌每个牌面出现的次数。下标为牌面，值为次数
-//一共有13种牌(含鬼牌)，最小牌在map中值为2，最大为15，为了方便计算，数组长度为16
-type FaceCount [16]int
-
-func (c *counterG) Start(hand1, hand2 string) int {
+func (c *Counter) Start(hand1, hand2 string) int {
 	faceCount1, faceCount2 := c.getFaceCount(hand1), c.getFaceCount(hand2)
 
 	rank1, newHand1 := c.getHandRank(hand1, faceCount1)
@@ -37,7 +34,7 @@ func (c *counterG) Start(hand1, hand2 string) int {
 			fallthrough
 		case HandRank["同花顺"]:
 			// 顺子总是挑出来的。顺子比较头牌就可以判断大小
-			rst, _ := max(FaceRank[newHand1[0:1]], FaceRank[newHand2[0:1]])
+			rst, _ := Max(FaceRank[newHand1[0:1]], FaceRank[newHand2[0:1]])
 			return rst
 
 		default:
@@ -53,12 +50,12 @@ func (c *counterG) Start(hand1, hand2 string) int {
 }
 
 //isRoyalFlush 在保证同花的前提下判断是否可能为皇家同花顺
-func (*counterG) isRoyalFlush(hand string) bool {
+func (*Counter) isRoyalFlush(hand string) bool {
 	return strings.Compare(hand, "AKQJT") == 0
 }
 
 //getFaceCount 计算手牌中每种牌出现的次数
-func (*counterG) getFaceCount(hand string) FaceCount {
+func (*Counter) getFaceCount(hand string) FaceCount {
 	var count FaceCount
 	for i := 0; i < len(hand); i += 2 {
 		count[FaceRank[hand[i:i+1]]]++
@@ -67,8 +64,8 @@ func (*counterG) getFaceCount(hand string) FaceCount {
 }
 
 //getFaceCountCode 计算出现1次至4次的牌的code
-func (*counterG) getFaceCountCode(count FaceCount) string {
-	sb.Reset()
+func (*Counter) getFaceCountCode(count FaceCount) string {
+	Sb.Reset()
 	var card1, card2, card3, card4 int
 	for i, v := range count {
 		//  不记录鬼牌
@@ -89,15 +86,15 @@ func (*counterG) getFaceCountCode(count FaceCount) string {
 		}
 	}
 
-	sb.WriteString(strconv.Itoa(card1))
-	sb.WriteString(strconv.Itoa(card2))
-	sb.WriteString(strconv.Itoa(card3))
-	sb.WriteString(strconv.Itoa(card4))
-	return sb.String()
+	Sb.WriteString(strconv.Itoa(card1))
+	Sb.WriteString(strconv.Itoa(card2))
+	Sb.WriteString(strconv.Itoa(card3))
+	Sb.WriteString(strconv.Itoa(card4))
+	return Sb.String()
 }
 
 //getFaceCountMap 返回一个map，该map的key为出现的次数，v是一个[]int，存储了牌面值
-func (*counterG) getFaceCountMap(count FaceCount) map[int][]int {
+func (*Counter) getFaceCountMap(count FaceCount) map[int][]int {
 	countMap := make(map[int][]int, 5)
 	countMap[1] = make([]int, 0, 7)
 	countMap[2] = make([]int, 0, 3)
@@ -116,7 +113,7 @@ func (*counterG) getFaceCountMap(count FaceCount) map[int][]int {
 	return countMap
 }
 
-func (c *counterG) getHandRank(hand string, count FaceCount) (int, string) {
+func (c *Counter) getHandRank(hand string, count FaceCount) (int, string) {
 	//  鬼牌
 	if count[15] == 1 {
 		return c.getGhostHandRank(hand, count)
@@ -125,7 +122,7 @@ func (c *counterG) getHandRank(hand string, count FaceCount) (int, string) {
 	}
 }
 
-func (c *counterG) getGhostHandRank(hand string, faceCount FaceCount) (int, string) {
+func (c *Counter) getGhostHandRank(hand string, faceCount FaceCount) (int, string) {
 	code := c.getFaceCountCode(faceCount)
 	rank := GhostHandCountCode[code]
 	newHand := ""
@@ -159,7 +156,7 @@ func (c *counterG) getGhostHandRank(hand string, faceCount FaceCount) (int, stri
 }
 
 //getSevenHandRank 得到牌型，如果有顺子、同花，会返回新的子串
-func (c *counterG) getSevenHandRank(hand string, faceCount FaceCount) (int, string) {
+func (c *Counter) getSevenHandRank(hand string, faceCount FaceCount) (int, string) {
 	code := c.getFaceCountCode(faceCount)
 	rank := SevenHandCountCode[code]
 	newHand := ""
@@ -191,23 +188,23 @@ func (c *counterG) getSevenHandRank(hand string, faceCount FaceCount) (int, stri
 
 //maybeIsFlush 判断是否可能是同花，可能时返回最大的同花牌
 //传入的字符串要求包含花色信息。返回的字符串无花色信息
-func (c *counterG) maybeIsFlush(hand string, isGhost bool) (string, bool) {
-	s1.Reset()
-	s2.Reset()
-	s3.Reset()
-	s4.Reset()
+func (c *Counter) maybeIsFlush(hand string, isGhost bool) (string, bool) {
+	S1.Reset()
+	S2.Reset()
+	S3.Reset()
+	S4.Reset()
 	for i := 0; i < len(hand); i += 2 {
 		face := hand[i : i+1]
 		suit := hand[i+1 : i+2]
 		switch suit {
 		case "s":
-			s1.WriteString(face)
+			S1.WriteString(face)
 		case "h":
-			s2.WriteString(face)
+			S2.WriteString(face)
 		case "d":
-			s3.WriteString(face)
+			S3.WriteString(face)
 		case "c":
-			s4.WriteString(face)
+			S4.WriteString(face)
 		}
 	}
 
@@ -217,22 +214,22 @@ func (c *counterG) maybeIsFlush(hand string, isGhost bool) (string, bool) {
 	if isGhost {
 		length = 4
 	}
-	if s1.Len() >= length {
-		flush = s1.String()
-	} else if s2.Len() >= length {
-		flush = s2.String()
-	} else if s3.Len() >= length {
-		flush = s3.String()
-	} else if s4.Len() >= length {
-		flush = s4.String()
+	if S1.Len() >= length {
+		flush = S1.String()
+	} else if S2.Len() >= length {
+		flush = S2.String()
+	} else if S3.Len() >= length {
+		flush = S3.String()
+	} else if S4.Len() >= length {
+		flush = S4.String()
 	}
 	return flush, len(flush) > 0
 }
 
 //  判断无重复字符串是否是顺子
-func (c *counterG) isStraightByNoDuplicate(hand string, needSort bool) (string, bool) {
+func (c *Counter) isStraightByNoDuplicate(hand string, needSort bool) (string, bool) {
 	if needSort {
-		hand = sort(hand)
+		hand = Sort(hand)
 	}
 	straight := ""
 	//  由于是无重复子串，通过头部减去尾部可以直接判断是不是顺子
@@ -260,17 +257,17 @@ func (c *counterG) isStraightByNoDuplicate(hand string, needSort bool) (string, 
 	return hand, isStraight
 }
 
-func (c *counterG) isStraightByCount(count FaceCount) (string, bool) {
-	sb.Reset()
+func (c *Counter) isStraightByCount(count FaceCount) (string, bool) {
+	Sb.Reset()
 	for i := 14; i >= 2; i-- {
 		v := count[i]
 		if v == 0 {
 			continue
 		}
-		sb.WriteString(FaceName[i])
+		Sb.WriteString(FaceName[i])
 	}
 
-	hand := sb.String()
+	hand := Sb.String()
 	if len(hand) < 5 {
 		return "", false
 	}
@@ -279,11 +276,11 @@ func (c *counterG) isStraightByCount(count FaceCount) (string, bool) {
 }
 
 //  maybeIsStraight 判断有鬼牌的手牌是不是顺子，是顺子时返回最大顺子手牌，没顺子时返回排序后的hand
-func (c *counterG) maybeIsStraightByNoDuplicate(hand string, needSort bool) (string, bool) {
+func (c *Counter) maybeIsStraightByNoDuplicate(hand string, needSort bool) (string, bool) {
 	if needSort {
-		hand = sort(hand)
+		hand = Sort(hand)
 	}
-	sb.Reset()
+	Sb.Reset()
 	var insertFlag bool
 	var val, lastVal, curVal int
 	var str, curKey string
@@ -294,79 +291,79 @@ func (c *counterG) maybeIsStraightByNoDuplicate(hand string, needSort bool) (str
 		str = hand[i : i+4]
 
 		lastVal = FaceRank[str[0:1]]
-		sb.WriteString(str[0:1])
+		Sb.WriteString(str[0:1])
 		for j := 1; j < len(str); j++ {
 			curKey = str[j : j+1]
 			curVal = FaceRank[curKey]
 			val = lastVal - curVal
 			if val == 1 {
-				sb.WriteString(curKey)
+				Sb.WriteString(curKey)
 			} else if val == 2 && insertFlag == false {
 				insertFlag = true
 				//  将缺的键插入
-				sb.WriteString(FaceName[lastVal-1])
-				sb.WriteString(curKey)
+				Sb.WriteString(FaceName[lastVal-1])
+				Sb.WriteString(curKey)
 			} else {
-				sb.Reset()
+				Sb.Reset()
 				break
 			}
 			lastVal = curVal
 		}
 		//  如果stringBuilder的长度不为0，说明已将找到了顺子
-		if sb.Len() > 0 {
+		if Sb.Len() > 0 {
 			break
 		}
 	}
 
 	//  如果有顺子且flag为false，说明要在头部或者尾部插入组成顺子
-	if sb.Len() > 0 && insertFlag == false {
+	if Sb.Len() > 0 && insertFlag == false {
 		//  头为A说明是顺子是AKQJ
-		if sb.String()[0] == 'A' {
-			sb.WriteString("T")
+		if Sb.String()[0] == 'A' {
+			Sb.WriteString("T")
 		} else {
-			hand = sb.String()
-			sb.Reset()
-			sb.WriteString(FaceName[FaceRank[hand[0:1]]+1])
-			sb.WriteString(hand)
+			hand = Sb.String()
+			Sb.Reset()
+			Sb.WriteString(FaceName[FaceRank[hand[0:1]]+1])
+			Sb.WriteString(hand)
 		}
-	} else if sb.Len() == 0 && hand[0] == 'A' {
+	} else if Sb.Len() == 0 && hand[0] == 'A' {
 		//  A5432的特殊情况
 		face := hand[1:]
 		if strings.Contains(face, "543") ||
 			strings.Contains(face, "542") ||
 			strings.Contains(face, "532") ||
 			strings.Contains(face, "432") {
-			sb.WriteString("5432A")
+			Sb.WriteString("5432A")
 		}
 	}
 
 	isStraight := false
-	if sb.Len() > 0 {
-		hand = sb.String()
+	if Sb.Len() > 0 {
+		hand = Sb.String()
 		isStraight = true
 	}
 
 	return hand, isStraight
 }
 
-func (c *counterG) maybeIsStraightByFaceCount(count FaceCount) (string, bool) {
-	sb.Reset()
+func (c *Counter) maybeIsStraightByFaceCount(count FaceCount) (string, bool) {
+	Sb.Reset()
 	//  获取无重复子串
 	for i := 14; i >= 2; i-- {
 		v := count[i]
 		if v == 0 {
 			continue
 		}
-		sb.WriteString(FaceName[i])
+		Sb.WriteString(FaceName[i])
 	}
 
-	if sb.Len() < 4 {
+	if Sb.Len() < 4 {
 		return "", false
 	}
-	return c.maybeIsStraightByNoDuplicate(sb.String(), false)
+	return c.maybeIsStraightByNoDuplicate(Sb.String(), false)
 }
 
-func (c *counterG) equalJudgeHighCard(count1, count2 FaceCount) int {
+func (c *Counter) equalJudgeHighCard(count1, count2 FaceCount) int {
 	m1, m2 := c.getFaceCountMap(count1)[1], c.getFaceCountMap(count2)[1]
 
 	rst := 0
@@ -384,7 +381,7 @@ func (c *counterG) equalJudgeHighCard(count1, count2 FaceCount) int {
 	return rst
 }
 
-func (c *counterG) equalJudgeFlush(hand1, hand2 string, isGhost1, isGhost2 bool) int {
+func (c *Counter) equalJudgeFlush(hand1, hand2 string, isGhost1, isGhost2 bool) int {
 	if isGhost1 {
 		hand1 = c.fillFlush(hand1)
 	}
@@ -410,32 +407,32 @@ func (c *counterG) equalJudgeFlush(hand1, hand2 string, isGhost1, isGhost2 bool)
 
 //fillFlush 4手牌时填充为5手牌同花，5手牌时换掉一个牌成为最大牌(有鬼牌)
 //要求传入的手牌是有序的
-func (c *counterG) fillFlush(hand string) string {
+func (c *Counter) fillFlush(hand string) string {
 	for i := 14; i >= 2; i-- {
 		insertFace := FaceName[i]
 		if !strings.Contains(hand, insertFace) {
-			sb.Reset()
+			Sb.Reset()
 			for j := 0; j < len(hand); j++ {
 				face := hand[j : j+1]
 				if FaceRank[insertFace] > FaceRank[face] {
-					sb.WriteString(insertFace)
-					sb.WriteString(hand[j:])
+					Sb.WriteString(insertFace)
+					Sb.WriteString(hand[j:])
 					break
 				} else {
-					sb.WriteString(face)
+					Sb.WriteString(face)
 				}
 			}
 			break
 		}
 	}
-	newHand := sb.String()
+	newHand := Sb.String()
 	if len(newHand) >= 5 {
 		newHand = newHand[0:5]
 	}
 	return newHand
 }
 
-func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
+func (c *Counter) equalJudgePair(count1, count2 FaceCount, rank int) int {
 	//  FaceRank[15]=X，如果15号位有值说明是鬼牌
 	isGhost1 := count1[15] != 0
 	isGhost2 := count2[15] != 0
@@ -458,7 +455,7 @@ func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
 		}
 
 		v1, v2 = map1[2][0], map2[2][0]
-		if rst, isEqual = max(v1, v2); isEqual {
+		if rst, isEqual = Max(v1, v2); isEqual {
 			vs1, vs2 := map1[1], map2[1]
 			for i := 0; i < 3; i++ {
 				v1 = vs1[i]
@@ -478,9 +475,9 @@ func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
 		v1s, v2s := map1[2], map2[2]
 		v1, v2 = v1s[0], v2s[0]
 
-		if rst, isEqual = max(v1, v2); isEqual {
+		if rst, isEqual = Max(v1, v2); isEqual {
 			v1, v2 = v1s[1], v2s[1]
-			if rst, isEqual = max(v1, v2); isEqual {
+			if rst, isEqual = Max(v1, v2); isEqual {
 				//  可能有3个两对，即AABBCCD牌型
 				var v3, v4 int
 				if len(v1s) == 3 {
@@ -503,7 +500,7 @@ func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
 					v2 = v4
 				}
 
-				rst, _ = max(v1, v2)
+				rst, _ = Max(v1, v2)
 			}
 		}
 
@@ -521,7 +518,7 @@ func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
 		}
 
 		v1, v2 = map1[3][0], map2[3][0]
-		if rst, isEqual = max(v1, v2); isEqual {
+		if rst, isEqual = Max(v1, v2); isEqual {
 			v1s, v2s := map1[1], map2[1]
 			for i := 0; i < 2; i++ {
 				v1, v2 = v1s[i], v2s[i]
@@ -549,7 +546,7 @@ func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
 		}
 
 		v1, v2 = map1[3][0], map2[3][0]
-		if rst, isEqual = max(v1, v2); isEqual {
+		if rst, isEqual = Max(v1, v2); isEqual {
 			//  7手牌时候葫芦可能没有两次牌，如AAABBBC
 			if len(map1[2]) == 0 {
 				v1 = map1[3][1]
@@ -561,7 +558,7 @@ func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
 			} else {
 				v2 = map2[2][0]
 			}
-			rst, _ = max(v1, v2)
+			rst, _ = Max(v1, v2)
 		}
 
 	//  鬼牌为四条时可能缺牌，也可能不缺牌
@@ -578,9 +575,9 @@ func (c *counterG) equalJudgePair(count1, count2 FaceCount, rank int) int {
 		}
 
 		v1, v2 = map1[4][0], map2[4][0]
-		if rst, isEqual = max(v1, v2); isEqual {
+		if rst, isEqual = Max(v1, v2); isEqual {
 			v1, v2 = map1[1][0], map2[1][0]
-			rst, _ = max(v1, v2)
+			rst, _ = Max(v1, v2)
 		}
 	}
 	return rst
