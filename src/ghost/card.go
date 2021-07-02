@@ -106,7 +106,7 @@ var GhostHandCountCode = map[string]int{
 	"3010": HandRank["四条"], //可能为同花顺、皇家同花顺
 	"2200": HandRank["葫芦"], //可能为同花顺、皇家同花顺
 	"4100": HandRank["三条"], //可能为顺子、同花、同花顺、皇家同花顺
-	"6000": HandRank["两对"], //可能为顺子、同花、同花顺、皇家同花顺
+	"6000": HandRank["一对"], //可能为顺子、同花、同花顺、皇家同花顺
 }
 
 var sb, s1, s2, s3, s4 strings.Builder
@@ -119,6 +119,7 @@ func init() {
 	s4.Grow(5)
 }
 
+// 对手牌进行排序，由于手牌最少长4，最多长7，插入排序性能更好
 func sort(hand string) string {
 	runes := []rune(hand)
 	//  insert sort
