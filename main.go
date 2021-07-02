@@ -10,14 +10,10 @@ import (
 )
 
 func main() {
-	c := casino.Casino{}
-	rst := c.Start("7c5sAd7h6c2hKh", "4s8c7c5sAd7h6c")
-	fmt.Println(rst)
-
 	startTime := time.Now()
-	spendTimeFiveHand := test("./input/match_result.json")
-	spendTimeSevenHand1 := test("./input/seven_cards_with_ghost.json")
-	spendTimeSevenHand2 := test("./input/seven_cards_with_ghost.result.json")
+	spendTimeFiveHand := testFiveHand("./input/match_result.json")
+	spendTimeSevenHand1 := testFiveHand("./input/seven_cards_with_ghost.json")
+	spendTimeSevenHand2 := testFiveHand("./input/seven_cards_with_ghost.result.json")
 	spendTimeAll := time.Since(startTime)
 
 	fmt.Printf("FiveHand Spend:%v\n"+
@@ -28,7 +24,7 @@ func main() {
 
 }
 
-func test(filePath string) time.Duration {
+func testFiveHand(filePath string) time.Duration {
 	var matches Matches
 	c := casino.Casino{}
 	file, err := ioutil.ReadFile(filePath)
